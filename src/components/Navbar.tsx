@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import logo from "@/assets/logo.svg";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -27,9 +28,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary/10 border-2 border-primary flex items-center justify-center">
-              <span className="font-pixel text-[8px] text-primary text-glow-cyan">OG</span>
-            </div>
+            <img
+              src={logo}
+              alt="OverGuild logo"
+              className="w-8 h-8"
+            />
             <span className="text-lg font-bold tracking-tight">OverGuild</span>
           </div>
 

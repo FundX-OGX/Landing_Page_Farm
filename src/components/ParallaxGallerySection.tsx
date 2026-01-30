@@ -1,5 +1,6 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import screenshotInventory from "@/assets/screenshot-inventory.png";
 import screenshotMap from "@/assets/screenshot-map.png";
 import screenshotTavern from "@/assets/screenshot-tavern.png";
@@ -10,37 +11,46 @@ const screenshots = [
     src: screenshotInventory,
     title: "The Sanctum",
     subtitle: "Your Personal Vault",
-    offset: 0,
+    description:
+      "Equip yourself with the finest DeFi tools. Connect wallets, swap tokens, and manage assets—all with intuitive drag-and-drop mechanics. No more hunting through endless menus.",
   },
   {
     src: screenshotMap,
     title: "World Map",
     subtitle: "Explore The Realm",
-    offset: 100,
+    description:
+      "Navigate through The Valley's vast landscape. Discover new zones, unlock quests, and track your progress across different regions. Every location serves a unique purpose.",
   },
   {
     src: screenshotTavern,
     title: "The Tavern",
     subtitle: "Meet Fellow Adventurers",
-    offset: 200,
+    description:
+      "Where legends gather. Join guilds, share strategies, and collaborate on quests with fellow adventurers. Social trading, but make it actually social.",
   },
   {
     src: screenshotTrading,
     title: "Trading Post",
     subtitle: "DeFi Made Simple",
-    offset: 300,
+    description:
+      "Transform complex DeFi operations into simple, game-like interactions. Swap tokens, provide liquidity, and manage your portfolio—all through intuitive gameplay mechanics.",
   },
 ];
 
 const ParallaxGallerySection = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeScreenshot = screenshots[activeIndex];
+
+  const nextSlide = () => {
+    setActiveIndex((prev) => (prev + 1) % screenshots.length);
+  };
+
+  const prevSlide = () => {
+    setActiveIndex((prev) => (prev - 1 + screenshots.length) % screenshots.length);
+  };
 
   return (
-    <section ref={containerRef} className="relative py-24 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 bg-surface-darker" />
       <div className="absolute inset-0 bg-grid opacity-10" />
 
@@ -65,117 +75,143 @@ const ParallaxGallerySection = () => {
           </p>
         </motion.div>
 
-        {/* Parallax Gallery */}
-        <div className="relative max-w-5xl mx-auto">
-          <div className="space-y-[-60px] md:space-y-[-100px]">
+        {/* Main Content: 2 Column Layout */}
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 mb-12">
+          {/* Left Column: Main Image with Carousel */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
+          >
+            <h3 className="text-2xl font-bold">Introduction</h3>
+            
+            {/* Main Image Container */}
+            <div className="relative group">
+              <div className="card-pixel overflow-hidden rounded-lg">
+                <div className="relative aspect-video">
+                  <motion.img
+                    key={activeIndex}
+                    src={activeScreenshot.src}
+                    alt={activeScreenshot.title}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-full h-full object-cover"
+                  />
+                  
+                  {/* Scanlines Overlay */}
+                  <div
+                    className="absolute inset-0 pointer-events-none opacity-10"
+                    style={{
+                      background:
+                        "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Navigation Arrows - luôn hiển thị */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background/90 backdrop-blur-sm border-2 border-border hover:bg-background hover:border-primary transition-all flex items-center justify-center z-10 shadow-lg"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="w-6 h-6 text-foreground" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background/90 backdrop-blur-sm border-2 border-border hover:bg-background hover:border-primary transition-all flex items-center justify-center z-10 shadow-lg"
+                aria-label="Next slide"
+              >
+                <ChevronRight className="w-6 h-6 text-foreground" />
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Right Column: Description */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="space-y-6"
+          >
+            <motion.h3
+              key={`title-${activeIndex}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="text-3xl md:text-4xl font-bold"
+            >
+              {activeScreenshot.title}: {activeScreenshot.subtitle}
+            </motion.h3>
+            
+            <motion.div
+              key={`desc-${activeIndex}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="space-y-4 text-muted-foreground leading-relaxed"
+            >
+              <p>{activeScreenshot.description}</p>
+              <p>
+                The Valley transforms DeFi from a spreadsheet nightmare into an{" "}
+                <span className="text-primary font-medium">immersive RPG quest</span>.
+                Connect your wallet, build your profile, and begin your adventure—all
+                through gameplay.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Horizontal Thumbnail Gallery */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="relative"
+        >
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             {screenshots.map((screenshot, index) => (
-              <ParallaxCard
+              <button
                 key={screenshot.title}
-                screenshot={screenshot}
-                index={index}
-                scrollYProgress={scrollYProgress}
-              />
+                onClick={() => setActiveIndex(index)}
+                className={`flex-shrink-0 relative group transition-all duration-300 ${
+                  index === activeIndex
+                    ? "scale-105 ring-2 ring-primary"
+                    : "opacity-60 hover:opacity-100"
+                }`}
+                style={{
+                  marginLeft: index > 0 ? "-20px" : "0",
+                  zIndex: screenshots.length - index,
+                }}
+              >
+                <div className="relative w-48 h-32 md:w-64 md:h-40 rounded-lg overflow-hidden border-2 border-border">
+                  <img
+                    src={screenshot.src}
+                    alt={screenshot.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div
+                    className="absolute inset-0 pointer-events-none opacity-10"
+                    style={{
+                      background:
+                        "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)",
+                    }}
+                  />
+                  {index === activeIndex && (
+                    <div className="absolute inset-0 bg-primary/20 pointer-events-none" />
+                  )}
+                </div>
+              </button>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
-  );
-};
-
-interface ParallaxCardProps {
-  screenshot: {
-    src: string;
-    title: string;
-    subtitle: string;
-    offset: number;
-  };
-  index: number;
-  scrollYProgress: ReturnType<typeof useScroll>["scrollYProgress"];
-}
-
-const ParallaxCard = ({ screenshot, index, scrollYProgress }: ParallaxCardProps) => {
-  const y = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [screenshot.offset, -screenshot.offset]
-  );
-
-  const rotation = index % 2 === 0 ? -3 : 3;
-  const xOffset = index % 2 === 0 ? -20 : 20;
-
-  return (
-    <motion.div
-      style={{ y }}
-      initial={{ opacity: 0, y: 80, rotate: rotation * 2 }}
-      whileInView={{ opacity: 1, y: 0, rotate: rotation }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-      className="relative group"
-    >
-      <div
-        className="relative mx-auto"
-        style={{
-          transform: `translateX(${xOffset}px)`,
-          maxWidth: `calc(100% - ${index * 20}px)`,
-          zIndex: screenshots.length - index,
-        }}
-      >
-        {/* Card Frame */}
-        <div className="card-pixel overflow-hidden transition-all duration-500 group-hover:translate-y-[-8px] group-hover:shadow-2xl group-hover:shadow-primary/30">
-          {/* Decorative Top Bar */}
-          <div className="flex items-center gap-2 px-4 py-3 bg-muted/50 border-b border-border">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-destructive/80" />
-              <div className="w-3 h-3 rounded-full bg-secondary/80" />
-              <div className="w-3 h-3 rounded-full bg-primary/80" />
-            </div>
-            <span className="font-pixel text-[8px] text-muted-foreground ml-2">
-              {screenshot.subtitle}
-            </span>
-          </div>
-
-          {/* Screenshot Image */}
-          <div className="relative aspect-video overflow-hidden">
-            <img
-              src={screenshot.src}
-              alt={screenshot.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-
-            {/* Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-            {/* Title Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-              <h3 className="text-2xl font-bold text-glow-cyan">
-                {screenshot.title}
-              </h3>
-              <p className="text-sm text-foreground/80">{screenshot.subtitle}</p>
-            </div>
-
-            {/* Scanlines Overlay */}
-            <div className="absolute inset-0 pointer-events-none opacity-10">
-              <div
-                className="w-full h-full"
-                style={{
-                  background:
-                    "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)",
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Glow Effect */}
-        <div
-          className="absolute -inset-4 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 blur-xl"
-          style={{
-            background: `radial-gradient(ellipse at center, hsl(var(--primary) / 0.3), transparent 70%)`,
-          }}
-        />
-      </div>
-    </motion.div>
   );
 };
 

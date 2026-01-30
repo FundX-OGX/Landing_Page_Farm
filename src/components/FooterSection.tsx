@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import WaitlistForm from "./WaitlistForm";
+import logo from "@/assets/logo.svg";
 
 const FooterSection = () => {
   return (
@@ -34,9 +35,11 @@ const FooterSection = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 border-2 border-primary flex items-center justify-center">
-                <span className="font-pixel text-[10px] text-primary text-glow-cyan">OG</span>
-              </div>
+              <img
+                src={logo}
+                alt="OverGuild logo"
+                className="w-10 h-10"
+              />
               <span className="text-xl font-bold">OverGuild</span>
             </div>
 
@@ -70,7 +73,7 @@ const FooterSection = () => {
 
             {/* Copyright */}
             <div className="text-muted-foreground text-sm">
-              <span className="font-pixel text-[8px]">© 2025 OVERGUILD</span>
+              <span className="font-pixel text-[8px]">© 2026 OVERGUILD</span>
             </div>
           </div>
 
