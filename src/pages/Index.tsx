@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import ValleyDemoSection from "@/components/ValleyDemoSection";
 import ScarcitySection from "@/components/ScarcitySection";
 import MapLegendSection from "@/components/MapLegendSection";
 import PathSection from "@/components/PathSection";
@@ -10,6 +11,7 @@ const Index = () => {
     <div className="relative min-h-screen bg-background text-foreground overflow-x-hidden scanlines">
       <Navbar />
       <HeroSection />
+      <ValleyDemoSection />
       <ScarcitySection />
       <MapLegendSection />
       <PathSection />
